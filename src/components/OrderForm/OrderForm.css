@@ -1,0 +1,372 @@
+.order-form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--space-4);
+}
+
+.order-form-modal {
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid var(--border-light);
+}
+
+.order-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-6);
+  border-bottom: 1px solid var(--border-light);
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+.order-form-header h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.order-form {
+  padding: var(--space-6);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.calculating {
+  font-size: 0.75rem;
+  color: var(--dd-blue);
+  font-weight: 400;
+  margin-left: auto;
+  animation: pulse 1.5s infinite;
+}
+
+.form-input {
+  padding: var(--space-3);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: all 0.2s ease-in-out;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--dd-red);
+  box-shadow: 0 0 0 3px rgba(235, 23, 0, 0.1);
+}
+
+.form-input.error {
+  border-color: var(--error);
+  box-shadow: 0 0 0 3px rgba(235, 23, 0, 0.1);
+}
+
+.form-input:disabled {
+  background-color: var(--bg-tertiary);
+  color: var(--text-tertiary);
+  cursor: not-allowed;
+}
+
+.form-error {
+  color: var(--error);
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: var(--space-1);
+}
+
+.pay-breakdown-section {
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+}
+
+.pay-breakdown-section h3 {
+  margin: 0 0 var(--space-4) 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border-light);
+}
+
+.form-actions .btn {
+  min-width: 120px;
+}
+
+/* Textarea specific styles */
+textarea.form-input {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+/* Input type specific styles */
+input[type="date"].form-input,
+input[type="time"].form-input {
+  cursor: pointer;
+}
+
+input[type="number"].form-input {
+  text-align: right;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .order-form-overlay {
+    padding: var(--space-2);
+  }
+  
+  .order-form-modal {
+    max-height: 95vh;
+  }
+  
+  .order-form-header,
+  .order-form {
+    padding: var(--space-4);
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+  
+  .form-actions .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .order-form-header {
+    padding: var(--space-3);
+  }
+  
+  .order-form-header h2 {
+    font-size: 1.25rem;
+  }
+  
+  .order-form {
+    padding: var(--space-3);
+  }
+  
+  .pay-breakdown-section {
+    padding: var(--space-3);
+  }
+}
+
+/* Animation enhancements */
+.form-input {
+  position: relative;
+  overflow: hidden;
+}
+
+.form-input:focus::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(235, 23, 0, 0.1), transparent);
+  animation: shimmer 0.5s ease-out;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Focus states for accessibility */
+.close-btn:focus {
+  outline: 2px solid var(--dd-red);
+  outline-offset: 2px;
+}
+
+/* Loading state */
+.order-form.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.order-form.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid var(--border-light);
+  border-top-color: var(--dd-red);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Form validation states */
+.form-input:valid {
+  border-color: var(--success);
+}
+
+.form-input:invalid:not(:focus):not(:placeholder-shown) {
+  border-color: var(--error);
+}
+
+/* Custom scrollbar for modal */
+.order-form-modal::-webkit-scrollbar {
+  width: 6px;
+}
+
+.order-form-modal::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+}
+
+.order-form-modal::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: 3px;
+}
+
+.order-form-modal::-webkit-scrollbar-thumb:hover {
+  background: var(--border-dark);
+}
+
+/* Print styles */
+@media print {
+  .order-form-overlay {
+    display: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .order-form-modal {
+    border-width: 2px;
+  }
+  
+  .form-input {
+    border-width: 2px;
+  }
+  
+  .pay-breakdown-section {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .calculating {
+    animation: none;
+  }
+  
+  .form-input:focus::before {
+    animation: none;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .order-form-overlay {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* Form field grouping */
+.form-group:has(input[type="time"]) {
+  position: relative;
+}
+
+.form-group:has(input[type="time"])::after {
+  content: '🕐';
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  opacity: 0.5;
+  font-size: 0.875rem;
+}
+
+/* Success state animation */
+.form-input.success {
+  border-color: var(--success);
+  animation: successPulse 0.3s ease-out;
+}
+
+@keyframes successPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 184, 148, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(0, 184, 148, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 184, 148, 0);
+  }
+}

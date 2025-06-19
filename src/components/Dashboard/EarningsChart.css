@@ -1,0 +1,323 @@
+.earnings-chart {
+  background-color: var(--bg-primary);
+}
+
+.earnings-chart .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.chart-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.metric-selector {
+  position: relative;
+}
+
+.metric-select {
+  appearance: none;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-4);
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  min-width: 150px;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+
+.metric-select:focus {
+  outline: none;
+  border-color: var(--dd-red);
+  box-shadow: 0 0 0 3px rgba(235, 23, 0, 0.1);
+}
+
+.chart-type-selector {
+  display: flex;
+  gap: var(--space-1);
+  background-color: var(--bg-secondary);
+  padding: var(--space-1);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+}
+
+.chart-type-btn {
+  background: none;
+  border: none;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-type-btn:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.chart-type-btn.active {
+  background-color: var(--dd-red);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.chart-container {
+  margin: var(--space-4) 0;
+  padding: var(--space-4);
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+}
+
+.chart-tooltip {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  box-shadow: var(--shadow-lg);
+}
+
+.tooltip-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+  font-size: 0.875rem;
+}
+
+.tooltip-value {
+  font-size: 0.875rem;
+  margin: var(--space-1) 0;
+  font-weight: 500;
+}
+
+.chart-summary {
+  display: flex;
+  justify-content: space-around;
+  padding: var(--space-4);
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.summary-label {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+.summary-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Empty state */
+.chart-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12) var(--space-4);
+  text-align: center;
+  color: var(--text-tertiary);
+}
+
+.chart-empty-state svg {
+  margin-bottom: var(--space-4);
+  opacity: 0.5;
+}
+
+.chart-empty-state h4 {
+  margin-bottom: var(--space-2);
+  color: var(--text-secondary);
+  font-size: 1.125rem;
+}
+
+.chart-empty-state p {
+  margin: 0;
+  font-size: 0.875rem;
+  max-width: 300px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .earnings-chart .card-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .chart-controls {
+    justify-content: space-between;
+  }
+  
+  .metric-select {
+    min-width: auto;
+    flex: 1;
+  }
+  
+  .chart-container {
+    margin: var(--space-3) 0;
+    padding: var(--space-3);
+  }
+  
+  .chart-summary {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  
+  .summary-item {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-controls {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  
+  .chart-type-selector {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .chart-type-btn {
+    flex: 1;
+  }
+  
+  .chart-container {
+    padding: var(--space-2);
+  }
+  
+  .chart-summary {
+    padding: var(--space-3);
+  }
+}
+
+/* Animation enhancements */
+.chart-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.chart-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(235, 23, 0, 0.05), transparent);
+  transition: left 0.5s;
+}
+
+.earnings-chart:hover .chart-container::before {
+  left: 100%;
+}
+
+/* Focus states for accessibility */
+.metric-select:focus,
+.chart-type-btn:focus {
+  outline: 2px solid var(--dd-red);
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  .chart-controls {
+    display: none;
+  }
+  
+  .chart-container {
+    border: 1px solid var(--border-medium);
+    box-shadow: none;
+  }
+  
+  .chart-summary {
+    border: 1px solid var(--border-medium);
+    box-shadow: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .chart-container,
+  .chart-summary {
+    border-width: 2px;
+  }
+  
+  .metric-select {
+    border-width: 2px;
+  }
+}
+
+/* Loading state */
+.earnings-chart.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.earnings-chart.loading .chart-container::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid var(--border-light);
+  border-top-color: var(--dd-red);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Custom scrollbar for select dropdown */
+.metric-select option {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  padding: var(--space-2);
+}
+
+/* Recharts customization */
+.recharts-cartesian-axis-tick-value {
+  fill: var(--text-tertiary);
+  font-size: 12px;
+}
+
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: var(--border-light);
+}
+
+.recharts-tooltip-wrapper {
+  z-index: 1000;
+}
+
+.recharts-active-dot {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}

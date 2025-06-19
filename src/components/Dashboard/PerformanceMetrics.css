@@ -1,0 +1,378 @@
+.performance-metrics {
+  background-color: var(--bg-primary);
+}
+
+.performance-metrics .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.performance-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 1px solid currentColor;
+  opacity: 0.8;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.metric-card {
+  padding: var(--space-4);
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.metric-card:hover {
+  border-color: var(--border-medium);
+  box-shadow: var(--shadow-sm);
+  background-color: var(--bg-primary);
+}
+
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+}
+
+.metric-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid currentColor;
+  opacity: 0.8;
+}
+
+.metric-trend {
+  display: flex;
+  align-items: center;
+}
+
+.trend-positive {
+  color: var(--success);
+  transform: rotate(0deg);
+}
+
+.trend-negative {
+  color: var(--error);
+  transform: rotate(180deg);
+}
+
+.metric-content {
+  text-align: left;
+}
+
+.metric-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.metric-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+  line-height: 1.2;
+}
+
+.metric-description {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Best Day Section */
+.best-day-section {
+  margin-bottom: var(--space-6);
+}
+
+.best-day-section h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.best-day-card {
+  padding: var(--space-4);
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+}
+
+.best-day-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.best-day-date {
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.best-day-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--dd-yellow);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.best-day-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-3);
+}
+
+.best-day-stat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.best-day-stat svg {
+  color: var(--dd-red);
+}
+
+/* Performance Tips */
+.performance-tips h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.tips-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.tip-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  border-left: 3px solid var(--dd-blue);
+}
+
+.tip-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.tip-item p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  
+  .metric-card {
+    padding: var(--space-3);
+  }
+  
+  .metric-value {
+    font-size: 1.25rem;
+  }
+  
+  .best-day-stats {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+  
+  .performance-badge {
+    font-size: 0.75rem;
+    padding: var(--space-1) var(--space-2);
+  }
+}
+
+@media (max-width: 480px) {
+  .performance-metrics .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+  
+  .metric-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+  
+  .metric-icon {
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  .best-day-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+  
+  .tip-item {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+}
+
+/* Animation enhancements */
+.metric-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.metric-card:hover::before {
+  left: 100%;
+}
+
+.best-day-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.best-day-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 204, 0, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.best-day-card:hover::before {
+  left: 100%;
+}
+
+/* Focus states for accessibility */
+.metric-card:focus {
+  outline: 2px solid var(--dd-red);
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  .metric-card,
+  .best-day-card,
+  .tip-item {
+    break-inside: avoid;
+    border: 1px solid var(--border-medium);
+    box-shadow: none;
+  }
+  
+  .metric-card::before,
+  .best-day-card::before {
+    display: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .metric-card,
+  .best-day-card,
+  .tip-item {
+    border-width: 2px;
+  }
+  
+  .metric-icon {
+    border-width: 2px;
+  }
+}
+
+/* Loading state */
+.performance-metrics.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.performance-metrics.loading .metrics-grid::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid var(--border-light);
+  border-top-color: var(--dd-red);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Efficiency score specific styling */
+.metric-card[data-metric="efficiency"] .metric-value {
+  background: linear-gradient(135deg, var(--dd-red), var(--dd-red-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Consistency score specific styling */
+.metric-card[data-metric="consistency"] .metric-icon {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+}
