@@ -18,10 +18,10 @@
     "dev:server": "node server/index.js",
     "dev:easy": "node start-dev.js",
     "test:coverage": "npm test -- --coverage --watchAll=false",
-    "dist": "npm run build && electron-builder --publish=never",
-    "dist:win": "npm run build && electron-builder --win --publish=never",
-    "dist:mac": "npm run build && electron-builder --mac --publish=never",
-    "dist:linux": "npm run build && electron-builder --linux --publish=never",
+    "dist": "npm run build && node scripts/build.js && electron-builder --publish=never",
+    "dist:win": "npm run build && node scripts/build.js && electron-builder --win --publish=never",
+    "dist:mac": "npm run build && node scripts/build.js && electron-builder --mac --publish=never",
+    "dist:linux": "npm run build && node scripts/build.js && electron-builder --linux --publish=never",
     "rebuild": "npm rebuild better-sqlite3 --build-from-source",
     "postinstall": "electron-builder install-app-deps"
   },
@@ -71,22 +71,18 @@
       "main": "build/electron.js"
     },
     "win": {
-      "target": "nsis",
-      "icon": "assets/icon.ico"
+      "target": "nsis"
     },
     "mac": {
-      "target": "dmg",
-      "icon": "assets/icon.icns"
+      "target": "dmg"
     },
     "linux": {
-      "target": "AppImage",
-      "icon": "assets/icon.png"
+      "target": "AppImage"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
     },
-    "afterSign": "scripts/notarize.js",
     "publish": {
       "provider": "github",
       "owner": "IXLives",

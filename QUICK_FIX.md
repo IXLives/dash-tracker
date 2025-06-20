@@ -59,6 +59,8 @@ python --version
 2. **API**: Database operations are now synchronous (faster)
 3. **Build**: Added Windows-specific build configuration
 4. **Scripts**: Added `dist:win`, `rebuild`, and `postinstall` scripts
+5. **Fixed**: Removed missing notarize.js script reference
+6. **Fixed**: Corrected electron.js main entry point configuration
 
 ## Files Updated
 - `package.json` - New dependency and scripts

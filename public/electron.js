@@ -16,7 +16,6 @@ function createWindow() {
       enableRemoteModule: false,
       webSecurity: true
     },
-    icon: path.join(__dirname, 'icon.png'),
     titleBarStyle: 'default',
     show: false
   });

@@ -42,6 +42,12 @@ npm install
 npm run dist:win
 ```
 
+**Recent Fixes Applied:**
+- ✅ Replaced sqlite3 with better-sqlite3 (no more Python/distutils errors)
+- ✅ Removed problematic afterSign notarize script reference
+- ✅ Fixed electron.js main entry point configuration
+- ✅ Added build preparation script for proper file copying
+
 ### Option 2: Step by Step
 ```powershell
 # 1. Install dependencies
