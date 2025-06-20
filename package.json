@@ -26,6 +26,7 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
+    "better-sqlite3": "^11.10.0",
     "cors": "^2.8.5",
     "date-fns": "^2.29.3",
     "electron-is-dev": "^3.0.1",
@@ -41,8 +42,7 @@
     "react-hot-toast": "^2.4.0",
     "react-router-dom": "^6.8.1",
     "react-scripts": "5.0.1",
-    "recharts": "^2.5.0",
-    "better-sqlite3": "^8.14.0"
+    "recharts": "^2.5.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.17.0",
