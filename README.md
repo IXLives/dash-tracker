@@ -69,11 +69,11 @@ A comprehensive desktop application for tracking DoorDash delivery profits and p
 - Node.js 16.0 or higher
 - npm or yarn package manager
 
-### Setup
+### Quick Start
 1. Clone the repository:
 ```bash
-git clone <repository-url>
-cd doordash-tracker
+git clone https://github.com/IXLives/dash-tracker.git
+cd dash-tracker
 ```
 
 2. Install dependencies:
@@ -81,15 +81,23 @@ cd doordash-tracker
 npm install
 ```
 
-3. Start the development servers:
+3. Start development (choose one):
+
+**Option A: Web Development (Recommended)**
+```bash
+npm run dev:web
+```
+- Express server: http://localhost:12001
+- React app: http://localhost:3000
+
+**Option B: Full Desktop App**
 ```bash
 npm run dev
 ```
+- Starts server + React + Electron desktop app
 
-This will start:
-- Express server on port 12001
-- React development server on port 3000
-- Electron desktop app
+### Troubleshooting
+If you encounter issues, see [LOCAL_DEVELOPMENT.md](./LOCAL_DEVELOPMENT.md) for detailed troubleshooting guide.
 
 ## Usage
 

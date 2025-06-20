@@ -13,7 +13,10 @@
     "electron-dev": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\"",
     "electron-pack": "npm run build && electron-builder",
     "server": "node server/index.js",
-    "dev": "concurrently \"npm run server\" \"npm run electron-dev\"",
+    "dev": "concurrently \"npm run server\" \"npm start\" \"wait-on http://localhost:3000 && wait-on http://localhost:12001 && electron .\"",
+    "dev:web": "concurrently \"npm run server\" \"npm start\"",
+    "dev:server": "node server/index.js",
+    "dev:easy": "node start-dev.js",
     "test:coverage": "npm test -- --coverage --watchAll=false",
     "dist": "npm run build && electron-builder --publish=never"
   },
