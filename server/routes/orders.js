@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
       return res.status(400).json({ error: 'Limit cannot exceed 200' });
     }
 
-    const orders = await req.db.getAllOrders(limit, offset);
+    const orders = await req.db.getOrders(limit, offset);
     res.json({
       orders,
       pagination: {

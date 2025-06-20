@@ -117,7 +117,9 @@ const Orders = () => {
     window.URL.revokeObjectURL(url);
   };
 
-  const filteredOrders = orders.filter(order => {
+  console.log('Orders data:', orders);
+  
+  const filteredOrders = orders.orders.filter(order => {
     const matchesSearch = !searchTerm || 
       order.notes?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.date.includes(searchTerm);

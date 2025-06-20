@@ -15,7 +15,7 @@ const dateSchema = Joi.object({
 // GET /api/analytics/overview - Get overall statistics
 router.get('/overview', async (req, res) => {
   try {
-    const stats = await req.db.getOverallStats();
+    const stats = await req.db.getOverviewStats(); 
     
     // Calculate additional metrics
     const response = {

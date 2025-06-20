@@ -51,6 +51,7 @@
     "concurrently": "^7.6.0",
     "electron": "^24.1.2",
     "electron-builder": "^23.6.0",
+    "electron-rebuild": "^3.2.9",
     "jest": "^27.5.1",
     "supertest": "^6.3.3",
     "wait-on": "^7.0.1"

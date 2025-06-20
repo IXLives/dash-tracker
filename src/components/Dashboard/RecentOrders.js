@@ -85,7 +85,7 @@ const RecentOrders = ({ orders = [] }) => {
           initial="hidden"
           animate="visible"
         >
-          {orders.map((order) => (
+          {orders.orders.map((order) => (
             <motion.div
               key={order.id}
               className="order-item"
