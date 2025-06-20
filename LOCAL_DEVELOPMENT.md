@@ -85,7 +85,11 @@ npm install
 
 # Clear npm cache
 npm cache clean --force
+
+# Windows users: See WINDOWS_BUILD.md for SQLite3 issues
 ```
+
+**Note**: We've switched from `sqlite3` to `better-sqlite3` to fix Windows compilation issues.
 
 ### 5. Electron Issues
 **Problem**: Electron app won't start or crashes

@@ -1,7 +1,7 @@
-const sqlite3 = require('sqlite3').verbose();
+const Database = require('better-sqlite3');
 const path = require('path');
 
-class Database {
+class DatabaseManager {
   constructor() {
     const dbPath = path.join(__dirname, '../../data/doordash_tracker.db');
     
@@ -12,14 +12,14 @@ class Database {
       fs.mkdirSync(dataDir, { recursive: true });
     }
 
-    this.db = new sqlite3.Database(dbPath, (err) => {
-      if (err) {
-        console.error('Error opening database:', err.message);
-      } else {
-        console.log('Connected to SQLite database');
-        this.initializeTables();
-      }
-    });
+    try {
+      this.db = new Database(dbPath);
+      console.log('Connected to SQLite database');
+      this.initializeTables();
+    } catch (err) {
+      console.error('Error opening database:', err.message);
+      throw err;
+    }
   }
 
   initializeTables() {
@@ -46,276 +46,294 @@ class Database {
       'CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at)'
     ];
 
-    this.db.run(createOrdersTable, (err) => {
-      if (err) {
-        console.error('Error creating orders table:', err.message);
-      } else {
-        console.log('Orders table ready');
-        
-        // Create indexes
-        createIndexes.forEach(indexQuery => {
-          this.db.run(indexQuery, (err) => {
-            if (err) console.error('Error creating index:', err.message);
-          });
-        });
-      }
-    });
+    try {
+      this.db.exec(createOrdersTable);
+      console.log('Orders table ready');
+      
+      // Create indexes
+      createIndexes.forEach(indexQuery => {
+        this.db.exec(indexQuery);
+      });
+    } catch (err) {
+      console.error('Error creating tables:', err.message);
+      throw err;
+    }
   }
 
   // Order operations
-  createOrder(orderData) {
-    return new Promise((resolve, reject) => {
-      const {
-        date,
-        start_time,
-        end_time,
-        duration_minutes,
-        pay,
-        miles,
-        tip = 0,
-        base_pay = 0,
-        peak_pay = 0,
-        notes = ''
-      } = orderData;
+  async createOrder(orderData) {
+    const {
+      date,
+      start_time,
+      end_time,
+      duration_minutes,
+      pay,
+      miles,
+      tip = 0,
+      base_pay = 0,
+      peak_pay = 0,
+      notes = ''
+    } = orderData;
 
-      const query = `
-        INSERT INTO orders (
-          date, start_time, end_time, duration_minutes, 
-          pay, miles, tip, base_pay, peak_pay, notes
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `;
+    const query = `
+      INSERT INTO orders (
+        date, start_time, end_time, duration_minutes, pay, miles, 
+        tip, base_pay, peak_pay, notes
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
 
-      this.db.run(
-        query,
-        [date, start_time, end_time, duration_minutes, pay, miles, tip, base_pay, peak_pay, notes],
-        function(err) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve({ id: this.lastID, ...orderData });
-          }
-        }
+    try {
+      const stmt = this.db.prepare(query);
+      const result = stmt.run(
+        date, start_time, end_time, duration_minutes, pay, miles,
+        tip, base_pay, peak_pay, notes
       );
-    });
+      
+      return { id: result.lastInsertRowid, ...orderData };
+    } catch (err) {
+      console.error('Error creating order:', err.message);
+      throw err;
+    }
   }
 
-  createBulkOrders(ordersData) {
-    return new Promise((resolve, reject) => {
-      if (!ordersData || ordersData.length === 0) {
-        resolve([]);
-        return;
+  async createOrdersBulk(orders) {
+    const query = `
+      INSERT INTO orders (
+        date, start_time, end_time, duration_minutes, pay, miles, 
+        tip, base_pay, peak_pay, notes
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    try {
+      const stmt = this.db.prepare(query);
+      const transaction = this.db.transaction((orders) => {
+        const results = [];
+        for (const order of orders) {
+          const {
+            date, start_time, end_time, duration_minutes, pay, miles,
+            tip = 0, base_pay = 0, peak_pay = 0, notes = ''
+          } = order;
+          
+          const result = stmt.run(
+            date, start_time, end_time, duration_minutes, pay, miles,
+            tip, base_pay, peak_pay, notes
+          );
+          results.push({ id: result.lastInsertRowid, ...order });
+        }
+        return results;
+      });
+
+      return transaction(orders);
+    } catch (err) {
+      console.error('Error creating bulk orders:', err.message);
+      throw err;
+    }
+  }
+
+  async getOrders(limit = 50, offset = 0, filters = {}) {
+    let query = 'SELECT * FROM orders';
+    const params = [];
+    const conditions = [];
+
+    // Add filters
+    if (filters.startDate) {
+      conditions.push('date >= ?');
+      params.push(filters.startDate);
+    }
+    if (filters.endDate) {
+      conditions.push('date <= ?');
+      params.push(filters.endDate);
+    }
+    if (filters.minPay) {
+      conditions.push('pay >= ?');
+      params.push(filters.minPay);
+    }
+    if (filters.maxPay) {
+      conditions.push('pay <= ?');
+      params.push(filters.maxPay);
+    }
+
+    if (conditions.length > 0) {
+      query += ' WHERE ' + conditions.join(' AND ');
+    }
+
+    query += ' ORDER BY date DESC, start_time DESC LIMIT ? OFFSET ?';
+    params.push(limit, offset);
+
+    try {
+      const stmt = this.db.prepare(query);
+      const orders = stmt.all(...params);
+      
+      // Get total count for pagination
+      let countQuery = 'SELECT COUNT(*) as total FROM orders';
+      const countParams = [];
+      
+      if (conditions.length > 0) {
+        countQuery += ' WHERE ' + conditions.join(' AND ');
+        countParams.push(...params.slice(0, -2)); // Remove limit and offset
+      }
+      
+      const countStmt = this.db.prepare(countQuery);
+      const { total } = countStmt.get(...countParams);
+
+      return { orders, total };
+    } catch (err) {
+      console.error('Error getting orders:', err.message);
+      throw err;
+    }
+  }
+
+  async getOrderById(id) {
+    try {
+      const stmt = this.db.prepare('SELECT * FROM orders WHERE id = ?');
+      return stmt.get(id);
+    } catch (err) {
+      console.error('Error getting order by ID:', err.message);
+      throw err;
+    }
+  }
+
+  async updateOrder(id, orderData) {
+    const {
+      date, start_time, end_time, duration_minutes, pay, miles,
+      tip, base_pay, peak_pay, notes
+    } = orderData;
+
+    const query = `
+      UPDATE orders SET 
+        date = ?, start_time = ?, end_time = ?, duration_minutes = ?, 
+        pay = ?, miles = ?, tip = ?, base_pay = ?, peak_pay = ?, 
+        notes = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `;
+
+    try {
+      const stmt = this.db.prepare(query);
+      const result = stmt.run(
+        date, start_time, end_time, duration_minutes, pay, miles,
+        tip, base_pay, peak_pay, notes, id
+      );
+
+      if (result.changes === 0) {
+        throw new Error('Order not found');
       }
 
-      const results = [];
-      let completed = 0;
-
-      // Process orders one by one to avoid transaction issues
-      const processOrder = (orderData) => {
-        return new Promise((resolveOrder, rejectOrder) => {
-          const {
-            date, start_time, end_time, duration_minutes,
-            pay, miles, tip = 0, base_pay = 0, peak_pay = 0, notes = ''
-          } = orderData;
-
-          const stmt = this.db.prepare(`
-            INSERT INTO orders (
-              date, start_time, end_time, duration_minutes, 
-              pay, miles, tip, base_pay, peak_pay, notes
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-          `);
-
-          stmt.run(
-            [date, start_time, end_time, duration_minutes, pay, miles, tip, base_pay, peak_pay, notes],
-            function(err) {
-              stmt.finalize();
-              if (err) {
-                rejectOrder(err);
-              } else {
-                resolveOrder({ id: this.lastID, ...orderData });
-              }
-            }
-          );
-        });
-      };
-
-      // Process all orders sequentially
-      const processAllOrders = async () => {
-        try {
-          for (const orderData of ordersData) {
-            const result = await processOrder(orderData);
-            results.push(result);
-          }
-          resolve(results);
-        } catch (error) {
-          reject(error);
-        }
-      };
-
-      processAllOrders();
-    });
+      return this.getOrderById(id);
+    } catch (err) {
+      console.error('Error updating order:', err.message);
+      throw err;
+    }
   }
 
-  getAllOrders(limit = 100, offset = 0) {
-    return new Promise((resolve, reject) => {
-      const query = `
-        SELECT * FROM orders 
-        ORDER BY date DESC, start_time DESC 
-        LIMIT ? OFFSET ?
-      `;
-      
-      this.db.all(query, [limit, offset], (err, rows) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(rows);
-        }
-      });
-    });
+  async deleteOrder(id) {
+    try {
+      const stmt = this.db.prepare('DELETE FROM orders WHERE id = ?');
+      const result = stmt.run(id);
+
+      if (result.changes === 0) {
+        throw new Error('Order not found');
+      }
+
+      return { success: true };
+    } catch (err) {
+      console.error('Error deleting order:', err.message);
+      throw err;
+    }
   }
 
-  getOrderById(id) {
-    return new Promise((resolve, reject) => {
-      const query = 'SELECT * FROM orders WHERE id = ?';
-      
-      this.db.get(query, [id], (err, row) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(row);
-        }
-      });
-    });
-  }
-
-  updateOrder(id, orderData) {
-    return new Promise((resolve, reject) => {
-      const fields = Object.keys(orderData).map(key => `${key} = ?`).join(', ');
-      const values = Object.values(orderData);
-      values.push(id);
-
-      const query = `
-        UPDATE orders 
-        SET ${fields}, updated_at = CURRENT_TIMESTAMP 
-        WHERE id = ?
-      `;
-
-      this.db.run(query, values, function(err) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve({ id, changes: this.changes, ...orderData });
-        }
-      });
-    });
-  }
-
-  deleteOrder(id) {
-    return new Promise((resolve, reject) => {
-      const query = 'DELETE FROM orders WHERE id = ?';
-      
-      this.db.run(query, [id], function(err) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve({ id, changes: this.changes });
-        }
-      });
-    });
+  async clearAllOrders() {
+    try {
+      const stmt = this.db.prepare('DELETE FROM orders');
+      const result = stmt.run();
+      return { deletedCount: result.changes };
+    } catch (err) {
+      console.error('Error clearing orders:', err.message);
+      throw err;
+    }
   }
 
   // Analytics operations
-  getDailyStats(startDate, endDate) {
-    return new Promise((resolve, reject) => {
-      const query = `
-        SELECT 
-          date,
-          COUNT(*) as total_orders,
-          SUM(pay) as total_pay,
-          SUM(miles) as total_miles,
-          SUM(duration_minutes) as total_minutes,
-          AVG(pay) as avg_pay_per_order,
-          SUM(pay) / SUM(miles) as pay_per_mile,
-          SUM(pay) / (SUM(duration_minutes) / 60.0) as pay_per_hour
-        FROM orders 
-        WHERE date BETWEEN ? AND ?
-        GROUP BY date
-        ORDER BY date DESC
-      `;
-      
-      this.db.all(query, [startDate, endDate], (err, rows) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(rows);
-        }
-      });
-    });
-  }
-
-  getHourlyStats(date) {
-    return new Promise((resolve, reject) => {
-      const query = `
-        SELECT 
-          CAST(substr(start_time, 1, 2) AS INTEGER) as hour,
-          COUNT(*) as total_orders,
-          SUM(pay) as total_pay,
-          SUM(miles) as total_miles,
-          SUM(duration_minutes) as total_minutes,
-          AVG(pay) as avg_pay_per_order
-        FROM orders 
-        WHERE date = ?
-        GROUP BY hour
-        ORDER BY hour
-      `;
-      
-      this.db.all(query, [date], (err, rows) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(rows);
-        }
-      });
-    });
-  }
-
-  getOverallStats() {
-    return new Promise((resolve, reject) => {
+  async getOverviewStats() {
+    try {
       const query = `
         SELECT 
           COUNT(*) as total_orders,
           SUM(pay) as total_earnings,
-          SUM(miles) as total_miles,
           SUM(duration_minutes) as total_minutes,
-          AVG(pay) as avg_pay_per_order,
-          SUM(pay) / SUM(miles) as avg_pay_per_mile,
-          SUM(pay) / (SUM(duration_minutes) / 60.0) as avg_pay_per_hour,
+          SUM(miles) as total_miles,
+          AVG(pay) as avg_pay,
+          AVG(duration_minutes) as avg_duration,
+          AVG(miles) as avg_miles,
           MIN(date) as first_order_date,
           MAX(date) as last_order_date
         FROM orders
       `;
       
-      this.db.get(query, [], (err, row) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(row);
-        }
-      });
-    });
+      const stmt = this.db.prepare(query);
+      return stmt.get();
+    } catch (err) {
+      console.error('Error getting overview stats:', err.message);
+      throw err;
+    }
+  }
+
+  async getDailyStats(days = 30) {
+    try {
+      const query = `
+        SELECT 
+          date,
+          COUNT(*) as order_count,
+          SUM(pay) as total_pay,
+          SUM(duration_minutes) as total_minutes,
+          SUM(miles) as total_miles,
+          AVG(pay) as avg_pay,
+          AVG(duration_minutes) as avg_duration,
+          AVG(miles) as avg_miles
+        FROM orders 
+        WHERE date >= date('now', '-${days} days')
+        GROUP BY date 
+        ORDER BY date DESC
+      `;
+      
+      const stmt = this.db.prepare(query);
+      return stmt.all();
+    } catch (err) {
+      console.error('Error getting daily stats:', err.message);
+      throw err;
+    }
+  }
+
+  async getHourlyStats() {
+    try {
+      const query = `
+        SELECT 
+          CAST(substr(start_time, 1, 2) AS INTEGER) as hour,
+          COUNT(*) as order_count,
+          SUM(pay) as total_pay,
+          SUM(duration_minutes) as total_minutes,
+          SUM(miles) as total_miles,
+          AVG(pay) as avg_pay,
+          AVG(duration_minutes) as avg_duration,
+          AVG(miles) as avg_miles
+        FROM orders 
+        GROUP BY hour 
+        ORDER BY hour
+      `;
+      
+      const stmt = this.db.prepare(query);
+      return stmt.all();
+    } catch (err) {
+      console.error('Error getting hourly stats:', err.message);
+      throw err;
+    }
   }
 
   close() {
-    return new Promise((resolve) => {
-      this.db.close((err) => {
-        if (err) {
-          console.error('Error closing database:', err.message);
-        } else {
-          console.log('Database connection closed');
-        }
-        resolve();
-      });
-    });
+    if (this.db) {
+      this.db.close();
+      console.log('Database connection closed');
+    }
   }
 }
 
-module.exports = Database;
+module.exports = DatabaseManager;
